@@ -1,0 +1,7 @@
+runtime = 10
+timestep = 0.01
+l = 10
+angles = [
+    0,
+    0
+]

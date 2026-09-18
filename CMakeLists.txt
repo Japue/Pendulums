@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(fractals)
+project(pendulums)
  
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
@@ -14,9 +14,12 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/SFML/SFML.git
     GIT_TAG 3.0.0
     GIT_SHALLOW ON
+    GIT_PROGRESS ON
     EXCLUDE_FROM_ALL
     SYSTEM
 )
+set(SFML_BUILD_AUDIO OFF CACHE BOOL "" FORCE)
+set(SFML_BUILD_NETWORK OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SFML)
  
 #TOML
@@ -25,16 +28,27 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
     GIT_TAG v3.4.0
     GIT_SHALLOW ON
+    GIT_PROGRESS ON
     EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(tomlplusplus)
+
+#BOOST
+FetchContent_Declare(
+    Boost
+    GIT_REPOSITORY https://github.com/boostorg/boost
+    GIT_TAG boost-1.83.0
+    GIT_SHALLOW ON
+    GIT_PROGRESS ON
+)
+FetchContent_MakeAvailable(Boost)
  
-add_executable(${TARGET} main.cpp 
+add_executable(${TARGET} main.cpp
 )
 
 target_compile_definitions(${TARGET} PRIVATE _USE_MATH_DEFINES)
  
-target_link_libraries(${TARGET} PRIVATE sfml-graphics sfml-window sfml-system tomlplusplus::tomlplusplus)
+target_link_libraries(${TARGET} PRIVATE sfml-graphics sfml-window sfml-system tomlplusplus::tomlplusplus Boost::headers)
  
 add_custom_command(TARGET ${TARGET} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
