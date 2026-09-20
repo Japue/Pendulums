@@ -14,9 +14,10 @@ int main(){
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Tree Fractal");
     sf::View view = window.getDefaultView();
     view.setCenter({0, 0});
+    window.setView(view);
 
-    bool is_dragging = false;
-    sf::Vector2i last_mouse_pos = sf::Mouse::getPosition(window);
+    sf::Clock clock;
+    double time = 0.0;
 
     //calculate all the points
     //config
@@ -44,8 +45,8 @@ int main(){
     boost::numeric::odeint::integrate_const(stepper, system, x, 0.0, c.runtime, c.timestep, observer);
 
     //make the lines and points
-    float theta1 = c.angles.first;
-    float theta2 = c.angles.second;
+    double theta1 = c.angles.first;
+    double theta2 = c.angles.second;
     float x1 = static_cast<float>(c.l * std::cos(theta1));
     float y1 = static_cast<float>(c.l * std::sin(theta1));
     float x2 = static_cast<float>(c.l * std::cos(theta2));
@@ -76,43 +77,33 @@ int main(){
 
             if (const auto* mousePressed = event -> getIf<sf::Event::MouseButtonPressed>()) {
                 if (mousePressed->button == sf::Mouse::Button::Left) {
-                    is_dragging = true;
                     on_off = true;
                 }
             }
-            
-            if (const auto* mouseReleased = event -> getIf<sf::Event::MouseButtonReleased>()) {
-                if (mouseReleased->button == sf::Mouse::Button::Left) {
-                    is_dragging = false;
-                }
-            }
+        }
 
-            if (const auto* scrolled = event -> getIf<sf::Event::MouseWheelScrolled>()) {
-                if (scrolled->delta > 0) {
-                    view.zoom(0.9f);
-                } else {
-                    view.zoom(1.1f);
-                }
+        float dt = clock.restart().asSeconds();
+        if (on_off) {
+            time += dt;
+            while(time >= c.timestep && time_iteration < static_cast<int>(trajectory.size())) {
+                std::pair<double, double> angle_pair = trajectory.at(time_iteration); 
+                theta1 = angle_pair.first;
+                theta2 = angle_pair.second;
+
+                x1 = static_cast<float>(c.l * std::cos(theta1));
+                y1 = static_cast<float>(c.l * std::sin(theta1));
+                x2 = static_cast<float>(c.l * std::cos(theta2));
+                y2 = static_cast<float>(c.l * std::sin(theta2));
+
+                p1 = {x1, y1};
+                p2 = {x1 + x2, y1 + y2};
+
+                time_iteration++;
+                time -= c.timestep;
             }
         }
 
         window.clear();
-
-        //dragging
-        sf::Vector2i new_mouse_pos = sf::Mouse::getPosition(window);
-        if (is_dragging) {
-            sf::Vector2i delta_pos = last_mouse_pos - new_mouse_pos;
-
-            sf::Vector2u window_size_u = window.getSize();
-            sf::Vector2f window_size(static_cast<float>(window_size_u.x), static_cast<float>(window_size_u.y));
-            sf::Vector2f view_size = view.getSize();
-
-            sf::Vector2f scale_and_float(static_cast<float>(delta_pos.x) * (view_size.x / window_size.x), static_cast<float>(delta_pos.y) * (view_size.y / window_size.y));
-            view.setCenter(view.getCenter() + scale_and_float);
-        }
-        last_mouse_pos = new_mouse_pos;
-        window.setView(view);
-
         //drawing
         nodes[0].position = origin;
         nodes[1].position = p1;
@@ -127,21 +118,6 @@ int main(){
         window.draw(nodes);
         window.draw(line1);
         window.draw(line2);
-
-        if (on_off && time_iteration << static_cast<int>(trajectory.size())){
-            std::pair<double, double> angle_pair = trajectory.at(time_iteration); 
-            theta1 = angle_pair.first;
-            theta2 = angle_pair.second;
-
-            x1 = static_cast<float>(c.l * std::cos(theta1));
-            y1 = static_cast<float>(c.l * std::sin(theta1));
-            x2 = static_cast<float>(c.l * std::cos(theta2));
-            y2 = static_cast<float>(c.l * std::sin(theta2));
-
-            p1 = {x1, y1};
-            p2 = {x1 + x2, y1 + y2};
-            time_iteration++;
-        }
         //
     
         window.display();

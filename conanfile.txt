@@ -1,0 +1,11 @@
+[requires]
+sfml/3.0.2
+tomlplusplus/3.4.0
+boost/1.91.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout

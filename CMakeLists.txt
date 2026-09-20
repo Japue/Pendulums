@@ -6,49 +6,21 @@ set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
 get_filename_component(TARGET "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
  
-include(FetchContent)
- 
 #SFML
-FetchContent_Declare(
-    SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.0
-    GIT_SHALLOW ON
-    GIT_PROGRESS ON
-    EXCLUDE_FROM_ALL
-    SYSTEM
-)
-set(SFML_BUILD_AUDIO OFF CACHE BOOL "" FORCE)
-set(SFML_BUILD_NETWORK OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(SFML)
+find_package(SFML REQUIRED)
  
 #TOML
-FetchContent_Declare(
-    tomlplusplus
-    GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
-    GIT_TAG v3.4.0
-    GIT_SHALLOW ON
-    GIT_PROGRESS ON
-    EXCLUDE_FROM_ALL
-)
-FetchContent_MakeAvailable(tomlplusplus)
+find_package(tomlplusplus REQUIRED)
 
 #BOOST
-FetchContent_Declare(
-    Boost
-    GIT_REPOSITORY https://github.com/boostorg/boost
-    GIT_TAG boost-1.83.0
-    GIT_SHALLOW ON
-    GIT_PROGRESS ON
-)
-FetchContent_MakeAvailable(Boost)
+find_package(Boost REQUIRED)
  
 add_executable(${TARGET} main.cpp
 )
 
 target_compile_definitions(${TARGET} PRIVATE _USE_MATH_DEFINES)
  
-target_link_libraries(${TARGET} PRIVATE sfml-graphics sfml-window sfml-system tomlplusplus::tomlplusplus Boost::headers)
+target_link_libraries(${TARGET} PRIVATE sfml::sfml tomlplusplus::tomlplusplus Boost::headers)
  
 add_custom_command(TARGET ${TARGET} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different

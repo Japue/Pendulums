@@ -13,8 +13,8 @@ void double_pendulum(const state_type& x, state_type& dxdt, const double t, cons
     double delta = theta1 - theta2;
     double den = 2 - std::pow(std::cos(delta), 2.0);
 
-    double e = 2 * c.g / c.l * std::cos(theta1) - omega2 * omega2 * std::sin(delta);
-    double f = c.g / c.l * cos(theta2) + omega1 * omega1 * std::sin(delta);
+    double e = 2 * c.g / c.physics_l * std::cos(theta1) - omega2 * omega2 * std::sin(delta);
+    double f = c.g / c.physics_l * cos(theta2) + omega1 * omega1 * std::sin(delta);
 
     dxdt[0] = omega1;
     dxdt[1] = omega2;

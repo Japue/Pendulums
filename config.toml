@@ -1,6 +1,6 @@
-runtime = 10
+runtime = 1000
 timestep = 0.01
-l = 10
+l = 100
 angles = [
     0,
     0
