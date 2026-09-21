@@ -12,6 +12,9 @@ struct Config {
     double g = -9.81;
     double physics_l = 1.0;
 
+    //mode
+    std::string mode = "single";
+
     //parameters
     double runtime = 10.0;
     double timestep = 0.1;
@@ -26,6 +29,8 @@ struct Config {
 
     Config(std::string config_file_name) {
         toml::table tbl = toml::parse_file(config_file_name);
+
+        mode = tbl["mode"].value_or(mode);
 
         runtime = tbl["runtime"].value_or(runtime);
         timestep = tbl["timestep"].value_or(timestep);

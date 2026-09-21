@@ -4,7 +4,7 @@
 
 typedef std::vector<double> state_type;
 
-void double_pendulum(const state_type& x, state_type& dxdt, const double t, const Config& c){
+inline void double_pendulum_solver(const state_type& x, state_type& dxdt, const double t, const Config& c){
     double theta1 = x[0];
     double theta2 = x[1];
     double omega1 = x[2];
