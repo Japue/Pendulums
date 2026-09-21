@@ -47,10 +47,10 @@ int main(){
     //make the lines and points
     double theta1 = c.angles.first;
     double theta2 = c.angles.second;
-    float x1 = static_cast<float>(c.l * std::cos(theta1));
-    float y1 = static_cast<float>(c.l * std::sin(theta1));
-    float x2 = static_cast<float>(c.l * std::cos(theta2));
-    float y2 = static_cast<float>(c.l * std::sin(theta2));
+    float x1 = static_cast<float>(c.l * std::sin(theta1));
+    float y1 = static_cast<float>(c.l * std::cos(theta1));
+    float x2 = static_cast<float>(c.l * std::sin(theta2));
+    float y2 = static_cast<float>(c.l * std::cos(theta2));
 
     sf::Vector2f origin{0.f, 0.f};
     sf::Vector2f p1{x1, y1};
@@ -103,10 +103,10 @@ int main(){
                 theta1 = angle_pair.first;
                 theta2 = angle_pair.second;
 
-                x1 = static_cast<float>(c.l * std::cos(theta1));
-                y1 = static_cast<float>(c.l * std::sin(theta1));
-                x2 = static_cast<float>(c.l * std::cos(theta2));
-                y2 = static_cast<float>(c.l * std::sin(theta2));
+                x1 = static_cast<float>(c.l * std::sin(theta1));
+                y1 = static_cast<float>(c.l * std::cos(theta1));
+                x2 = static_cast<float>(c.l * std::sin(theta2));
+                y2 = static_cast<float>(c.l * std::cos(theta2));
 
                 p1 = {x1, y1};
                 p2 = {x1 + x2, y1 + y2};

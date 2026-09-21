@@ -5,6 +5,9 @@ l = 150
 dot_size = 5
 
 angles = [
-    30,
-    2
+    90,
+    45
 ]
+
+#options
+trace = false

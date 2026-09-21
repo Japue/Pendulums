@@ -9,7 +9,7 @@
 
 struct Config {
     //constants
-    double g = 9.81;
+    double g = -9.81;
     double physics_l = 1.0;
 
     //parameters
