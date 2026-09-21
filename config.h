@@ -16,7 +16,8 @@ struct Config {
     double runtime = 10.0;
     double timestep = 0.1;
     //this l is for scaling the pendulum
-    double l = 1.0;
+    double l = 100.0;
+    double dot_size = 10.0;
     std::pair<double, double> angles = {};
 
     Config(std::string config_file_name) {
@@ -25,6 +26,7 @@ struct Config {
         runtime = tbl["runtime"].value_or(runtime);
         timestep = tbl["timestep"].value_or(timestep);
         l = tbl["l"].value_or(l);
+        dot_size = tbl["dot_size"].value_or(dot_size);
 
         if (auto arr = tbl["angles"].as_array(); arr && arr->size() >= 2) {
             auto first_val = arr->at(0).value<double>();

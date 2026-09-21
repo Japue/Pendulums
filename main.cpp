@@ -56,8 +56,21 @@ int main(){
     sf::Vector2f p1{x1, y1};
     sf::Vector2f p2{x1 + x2, y1 + y2};
 
-    sf::VertexArray nodes(sf::PrimitiveType::Points, 3);
+    float dot_size = static_cast<float>(c.dot_size);
+    sf::Vector2f dot_offset{dot_size, dot_size};
+
+    sf::CircleShape dot_origin(dot_size);
+    sf::CircleShape dot_p1(dot_size);
+    sf::CircleShape dot_p2(dot_size);
+
+    std::vector<sf::CircleShape> nodes = {
+        dot_origin,
+        dot_p1,
+        dot_p2
+    };
+    nodes[0].setPosition(origin - dot_offset);
     sf::VertexArray line1(sf::PrimitiveType::Lines, 2);
+    line1[0].position = origin;
     sf::VertexArray line2(sf::PrimitiveType::Lines, 2);
 
     //gameloop
@@ -105,21 +118,21 @@ int main(){
 
         window.clear();
         //drawing
-        nodes[0].position = origin;
-        nodes[1].position = p1;
-        nodes[2].position = p2;
+        nodes[1].setPosition(p1 - dot_offset);
+        nodes[2].setPosition(p2 - dot_offset);
 
-        line1[0].position = origin;
         line1[1].position = p1;
 
         line2[0].position = p1;
         line2[1].position = p2;
         
-        window.draw(nodes);
+        for (sf::CircleShape node : nodes) {
+            window.draw(node);
+        }
         window.draw(line1);
         window.draw(line2);
         //
     
         window.display();
     }
-}
+}   

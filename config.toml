@@ -1,7 +1,10 @@
 runtime = 1000
 timestep = 0.01
-l = 100
+
+l = 150
+dot_size = 5
+
 angles = [
-    0,
-    0
+    30,
+    2
 ]
