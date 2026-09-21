@@ -20,6 +20,10 @@ struct Config {
     double dot_size = 10.0;
     std::pair<double, double> angles = {};
 
+    //options
+    bool trace = false;
+    int trace_length = 25;
+
     Config(std::string config_file_name) {
         toml::table tbl = toml::parse_file(config_file_name);
 
@@ -27,6 +31,10 @@ struct Config {
         timestep = tbl["timestep"].value_or(timestep);
         l = tbl["l"].value_or(l);
         dot_size = tbl["dot_size"].value_or(dot_size);
+
+        //options
+        trace = tbl["trace"].value_or(dot_size);
+        trace_length = tbl["trace_length"].value_or(trace_length);
 
         if (auto arr = tbl["angles"].as_array(); arr && arr->size() >= 2) {
             auto first_val = arr->at(0).value<double>();

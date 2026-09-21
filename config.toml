@@ -11,3 +11,4 @@ angles = [
 
 #options
 trace = false
+trace_length = 1000

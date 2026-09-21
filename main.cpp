@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <utility>
+#include <list>
 
 #include "config.h"
 #include "de_solver.h"
@@ -73,6 +74,9 @@ int main(){
     line1[0].position = origin;
     sf::VertexArray line2(sf::PrimitiveType::Lines, 2);
 
+    //trace
+    std::list<sf::CircleShape> trace;
+
     //gameloop
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -125,9 +129,21 @@ int main(){
 
         line2[0].position = p1;
         line2[1].position = p2;
+
+        if (c.trace) {
+            sf::CircleShape trace_node = nodes[2];
+            trace_node.setRadius(dot_size / 5.f);
+            trace.push_back(trace_node);
+            if (trace.size() > c.trace_length) {
+                trace.pop_front();
+            }
+        }
         
         for (sf::CircleShape node : nodes) {
             window.draw(node);
+        }
+        for (sf::CircleShape trace_node : trace) {
+            window.draw(trace_node);
         }
         window.draw(line1);
         window.draw(line2);
