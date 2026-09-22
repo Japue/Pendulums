@@ -28,6 +28,7 @@ struct Config {
     //grid parameters
     int grid_radius = 1;
     double grid_angle_interval = 1;
+    bool grid_axes = false;
 
     //options
     bool trace = false;
@@ -57,6 +58,7 @@ struct Config {
         //grid options
         grid_radius = tbl["grid_radius"].value_or(grid_radius);
         grid_angle_interval = tbl["grid_angle_interval"].value_or(grid_angle_interval);
+        grid_axes = tbl["grid_axes"].value_or(grid_axes);
 
         //options
         trace = tbl["trace"].value_or(dot_size);

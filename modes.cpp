@@ -21,8 +21,6 @@ void single_pendulum(const Config& c, sf::RenderWindow& window) {
     //object initialisation
     Pendulum single(c, c.angles.first, c.angles.second, {0.0, 0.0});
 
-    std::list<sf::CircleShape> trace;
-
     //trajectory with an observer
     std::vector<std::pair<double, double>> trajectory;
     auto observer = [&trajectory](const state_type& x, double t) {
@@ -64,7 +62,7 @@ void single_pendulum(const Config& c, sf::RenderWindow& window) {
             while(time >= c.timestep && iteration < static_cast<int>(trajectory.size())) {
                 std::pair<double, double> angle_pair = trajectory.at(iteration);
 
-                single = Pendulum(c, angle_pair.first, angle_pair.second, {0.0, 0.0}); 
+                single.update_pendulum(c, angle_pair.first, angle_pair.second); 
 
                 iteration++;
                 time -= c.timestep;
@@ -88,6 +86,16 @@ void grid_pendulums(const Config& c, sf::RenderWindow& window, sf::View& view) {
     sf::Clock clock;
     double time = 0.0;
     int iteration = 0;
+
+    Axes axes;
+    sf::Font font;
+    if (c.grid_axes) {
+        if (!font.openFromFile("util/Roboto-Light.ttf")) {
+            std::cerr << "Failed to load font\n";
+        } else {
+            axes = Axes(c, font);
+        }
+    }
 
     //grid initialisation
     std::vector<sf::Vector2f> point_grid = make_point_grid(c);
@@ -180,23 +188,15 @@ void grid_pendulums(const Config& c, sf::RenderWindow& window, sf::View& view) {
             time += dt;
             while(time >= c.timestep && iteration < static_cast<int>(pendulums[0].trajectory.size())) {
                 for (Pendulum& pend: pendulums) {
-                std::pair<double, double> angle_pair = pend.trajectory.at(iteration); 
-                    double theta1 = angle_pair.first;
-                    double theta2 = angle_pair.second;
-
-                    float x1 = static_cast<float>(c.l * std::sin(theta1));
-                    float y1 = static_cast<float>(c.l * std::cos(theta1));
-                    float x2 = static_cast<float>(c.l * std::sin(theta2));
-                    float y2 = static_cast<float>(c.l * std::cos(theta2));
-
-                    pend.p1 = pend.origin + sf::Vector2f{x1, y1};
-                    pend.p2 = pend.origin + sf::Vector2f{x1 + x2, y1 + y2};
+                    std::pair<double, double> angle_pair = pend.trajectory.at(iteration); 
+                    pend.update_pendulum(c, angle_pair.first, angle_pair.second);
                 }
                 iteration++;
                 time -= c.timestep;
             }
         }
         //drawing
+        axes.draw_axes(window);
         for (Pendulum& pend : pendulums) {
             pend.draw_pendulum(c, window);
         }

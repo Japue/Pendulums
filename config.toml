@@ -15,7 +15,8 @@ angles = [
 #grid
 grid_radius = 5
 grid_angle_interval = 18
+grid_axes = true
 
 #trace
-trace = false
-trace_length = 1000
+trace = true
+trace_length = 100
