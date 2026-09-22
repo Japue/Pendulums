@@ -1,9 +1,9 @@
-mode = "single"
+mode = "grid"
 
 #general
-runtime = 1000
+runtime = 500
 timestep = 0.01
-l = 150
+l = 100
 dot_size = 5
 
 #single
@@ -13,7 +13,8 @@ angles = [
 ]
 
 #grid
-
+grid_radius = 5
+grid_angle_interval = 18
 
 #trace
 trace = false

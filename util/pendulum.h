@@ -13,6 +13,7 @@ struct Pendulum {
     sf::Vector2f p2;
 
     state_type state;
+    std::vector<std::pair<double, double>> trajectory;
 
     Pendulum(const Config& c, double theta1, double theta2, sf::Vector2f origin_) {
         float x1 = static_cast<float>(c.l * std::sin(theta1));
