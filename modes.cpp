@@ -1,10 +1,15 @@
 #include "modes.h"
 
+#include <vector>
+#include <utility>
+
 #include <SFML/Graphics.hpp>
 #include <boost/numeric/odeint.hpp>
+
 #include "util/config.h"
 #include "util/de_solver.h"
 #include "util/pendulum.h"
+#include "util/grid_maker.h"
 
 void single_pendulum(const Config& c, sf::RenderWindow& window) {
     //initialize
@@ -74,15 +79,47 @@ void single_pendulum(const Config& c, sf::RenderWindow& window) {
     }
 }
 
-void grid_pendulums(sf::RenderWindow& window) {
+void grid_pendulums(const Config& c, sf::RenderWindow& window, sf::View& view) {
     //initialization
+    bool is_dragging = false;
+    sf::Vector2i last_mouse_pos = sf::Mouse::getPosition(window);
+    bool on_off = false;
+
     sf::Clock clock;
     double time = 0.0;
     int iteration = 0;
-    bool on_off = false;
+
+    //grid initialisation
+    std::vector<sf::Vector2f> point_grid = make_point_grid(c);
+    std::vector<std::pair<double, double>> angle_grid = make_angle_grid(c);
+    int grid_size = 2 * c.grid_radius;
 
     //object initialisation
     std::vector<Pendulum> pendulums;
+    for (int y_iter = 0; y_iter <= grid_size; y_iter++) {
+        for (int x_iter = 0; x_iter <= grid_size; x_iter++) {
+            int index = (grid_size + 1) * y_iter + x_iter;
+            sf::Vector2f point = point_grid.at(index);
+            std::pair<double, double> angles = angle_grid.at(index);
+            pendulums.push_back(Pendulum(c, angles.first, angles.second, point));
+        }
+    }
+
+    //trajectory with an observer
+
+    //run the solver with the observer
+    auto system = [&c](const state_type& x, state_type& dxdt, const double t) {
+        double_pendulum_solver(x, dxdt, t, c);
+    };
+    boost::numeric::odeint::runge_kutta4<state_type> stepper;
+
+    for (Pendulum& pend : pendulums) {
+        auto observer = [&pend](const state_type& x, double t) {
+            pend.trajectory.push_back({x[0], x[1]});
+        };
+        boost::numeric::odeint::integrate_const(stepper, system, pend.state, 0.0, c.runtime, c.timestep, observer);
+        std::cout << "Calculated pendulum with origin (" << pend.origin.x << ", " << pend.origin.y << ")'\n";
+    }
 
     //gameLoop
     while (window.isOpen()) {
@@ -101,35 +138,68 @@ void grid_pendulums(sf::RenderWindow& window) {
             if (const auto* mousePressed = event -> getIf<sf::Event::MouseButtonPressed>()) {
                 if (mousePressed->button == sf::Mouse::Button::Left) {
                     on_off = true;
+                    is_dragging = true;
+                }
+            }
+
+            if (const auto* mouseReleased = event -> getIf<sf::Event::MouseButtonReleased>()) {
+                if (mouseReleased->button == sf::Mouse::Button::Left) {
+                    is_dragging = false;
+                }
+            }
+
+            if (const auto* scrolled = event -> getIf<sf::Event::MouseWheelScrolled>()) {
+                if (scrolled->delta > 0) {
+                    view.zoom(0.9f);
+                } else {
+                    view.zoom(1.1f);
                 }
             }
         }
+
+        window.clear();
+
+        //dragging
+        sf::Vector2i new_mouse_pos = sf::Mouse::getPosition(window);
+        if (is_dragging) {
+            sf::Vector2i delta_pos = last_mouse_pos - new_mouse_pos;
+
+            sf::Vector2u window_size_u = window.getSize();
+            sf::Vector2f window_size(static_cast<float>(window_size_u.x), static_cast<float>(window_size_u.y));
+            sf::Vector2f view_size = view.getSize();
+
+            sf::Vector2f scale_and_float(static_cast<float>(delta_pos.x) * (view_size.x / window_size.x), static_cast<float>(delta_pos.y) * (view_size.y / window_size.y));
+            view.setCenter(view.getCenter() + scale_and_float);
+        }
+        last_mouse_pos = new_mouse_pos;
+        window.setView(view);
 
         //check the clock
         float dt = clock.restart().asSeconds();
         if (on_off) {
             time += dt;
-            while(time >= c.timestep && iteration < static_cast<int>(trajectory.size())) {
-                std::pair<double, double> angle_pair = trajectory.at(iteration); 
-                theta1 = angle_pair.first;
-                theta2 = angle_pair.second;
+            while(time >= c.timestep && iteration < static_cast<int>(pendulums[0].trajectory.size())) {
+                for (Pendulum& pend: pendulums) {
+                std::pair<double, double> angle_pair = pend.trajectory.at(iteration); 
+                    double theta1 = angle_pair.first;
+                    double theta2 = angle_pair.second;
 
-                x1 = static_cast<float>(c.l * std::sin(theta1));
-                y1 = static_cast<float>(c.l * std::cos(theta1));
-                x2 = static_cast<float>(c.l * std::sin(theta2));
-                y2 = static_cast<float>(c.l * std::cos(theta2));
+                    float x1 = static_cast<float>(c.l * std::sin(theta1));
+                    float y1 = static_cast<float>(c.l * std::cos(theta1));
+                    float x2 = static_cast<float>(c.l * std::sin(theta2));
+                    float y2 = static_cast<float>(c.l * std::cos(theta2));
 
-                p1 = {x1, y1};
-                p2 = {x1 + x2, y1 + y2};
-
+                    pend.p1 = pend.origin + sf::Vector2f{x1, y1};
+                    pend.p2 = pend.origin + sf::Vector2f{x1 + x2, y1 + y2};
+                }
                 iteration++;
                 time -= c.timestep;
             }
         }
-
-        window.clear();
         //drawing
-        
+        for (Pendulum& pend : pendulums) {
+            pend.draw_pendulum(c, window);
+        }
         //
         window.display();
     }
