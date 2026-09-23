@@ -63,7 +63,7 @@ struct Config {
         grid_axes = tbl["grid_axes"].value_or(grid_axes);
 
         //options
-        trace = tbl["trace"].value_or(dot_size);
+        trace = tbl["trace"].value_or(trace);
         trace_length = tbl["trace_length"].value_or(trace_length);
     }
 };

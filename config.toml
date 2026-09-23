@@ -1,8 +1,8 @@
-mode = "graph"
+mode = "single"
 
 #general
 runtime = 500
-timestep = 0.01
+timestep = 0.000027
 l = 100
 dot_size = 5
 speed_factor = 1
@@ -18,6 +18,11 @@ grid_radius = 5
 grid_angle_interval = 18
 grid_axes = true
 
+#options
+#log
+
 #trace
-trace = true
+trace = false
 trace_length = 100
+
+#sound: when this enabled use timestep = 0.000027
