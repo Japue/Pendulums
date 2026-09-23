@@ -58,7 +58,7 @@ void single_pendulum(const Config& c, sf::RenderWindow& window) {
         //check the clock
         float dt = clock.restart().asSeconds();
         if (on_off) {
-            time += dt;
+            time += dt * c.speed_factor;
             while(time >= c.timestep && iteration < static_cast<int>(trajectory.size())) {
                 std::pair<double, double> angle_pair = trajectory.at(iteration);
 
@@ -185,7 +185,7 @@ void grid_pendulums(const Config& c, sf::RenderWindow& window, sf::View& view) {
         //check the clock
         float dt = clock.restart().asSeconds();
         if (on_off) {
-            time += dt;
+            time += dt * c.speed_factor;
             while(time >= c.timestep && iteration < static_cast<int>(pendulums[0].trajectory.size())) {
                 for (Pendulum& pend: pendulums) {
                     std::pair<double, double> angle_pair = pend.trajectory.at(iteration); 
@@ -291,7 +291,7 @@ void graph(const Config& c, sf::RenderWindow& window, sf::View& view) {
         //check the clock
         float dt = clock.restart().asSeconds();
         if (on_off) {
-            time += dt;
+            time += dt * c.speed_factor;
             while(time >= c.timestep && iteration < static_cast<int>(trajectory.size())) {
                 std::pair<double, double> angle_pair = trajectory.at(iteration);
                 

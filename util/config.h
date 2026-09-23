@@ -21,6 +21,7 @@ struct Config {
     //this l is for scaling the pendulum
     double l = 100.0;
     double dot_size = 10.0;
+    double speed_factor = 1.0;
 
     //single parameters
     std::pair<double, double> angles = {};
@@ -43,6 +44,7 @@ struct Config {
         timestep = tbl["timestep"].value_or(timestep);
         l = tbl["l"].value_or(l);
         dot_size = tbl["dot_size"].value_or(dot_size);
+        speed_factor = tbl["speed_factor"].value_or(speed_factor);
 
         //single options
         if (auto arr = tbl["angles"].as_array(); arr && arr->size() >= 2) {
