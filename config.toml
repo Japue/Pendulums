@@ -1,15 +1,16 @@
-mode = "grid"
+mode = "graph"
 
 #general
 runtime = 500
 timestep = 0.01
 l = 100
 dot_size = 5
+speed_factor = 1
 
 #single
 angles = [
     90,
-    45
+    30
 ]
 
 #grid

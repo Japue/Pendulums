@@ -27,6 +27,8 @@ int main(){
         single_pendulum(c, window);
     } else if (mode == "grid") {
         grid_pendulums(c, window, view);
+    } else if (mode == "graph") {
+        graph(c, window, view);
     } else {
         std::cout << mode << " is not valid mode" << '\n';
     }

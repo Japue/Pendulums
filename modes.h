@@ -6,3 +6,5 @@
 void single_pendulum(const Config& c, sf::RenderWindow& window);
 
 void grid_pendulums(const Config& c, sf::RenderWindow& window, sf::View& view);
+
+void graph(const Config& c, sf::RenderWindow& window, sf::View& view);
