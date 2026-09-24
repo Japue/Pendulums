@@ -32,6 +32,10 @@ struct Config {
     bool grid_axes = false;
 
     //options
+    //log
+    bool log = false;
+
+    //trace
     bool trace = false;
     int trace_length = 25;
 
@@ -63,6 +67,10 @@ struct Config {
         grid_axes = tbl["grid_axes"].value_or(grid_axes);
 
         //options
+        //log
+        log = tbl["log"].value_or(log);
+        
+        //trace
         trace = tbl["trace"].value_or(trace);
         trace_length = tbl["trace_length"].value_or(trace_length);
     }

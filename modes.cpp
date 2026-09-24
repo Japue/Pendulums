@@ -23,8 +23,11 @@ void single_pendulum(const Config& c, sf::RenderWindow& window) {
 
     //trajectory with an observer
     std::vector<std::pair<double, double>> trajectory;
-    auto observer = [&trajectory](const state_type& x, double t) {
+    auto observer = [&trajectory, &c](const state_type& x, double t) {
         trajectory.push_back({x[0], x[1]});
+        if (c.log) {
+            std::cout << "Made timestep: " << trajectory.size() * c.timestep  << "/" << c.runtime << '\n';
+        }
     };
 
     //run the solver with the observer
@@ -122,8 +125,11 @@ void grid_pendulums(const Config& c, sf::RenderWindow& window, sf::View& view) {
     boost::numeric::odeint::runge_kutta4<state_type> stepper;
 
     for (Pendulum& pend : pendulums) {
-        auto observer = [&pend](const state_type& x, double t) {
+        auto observer = [&pend, &c](const state_type& x, double t) {
             pend.trajectory.push_back({x[0], x[1]});
+            if (c.log) {
+                std::cout << "Made timestep: " << pend.trajectory.size() * c.timestep  << "/" << c.runtime << '\n';
+            }
         };
         boost::numeric::odeint::integrate_const(stepper, system, pend.state, 0.0, c.runtime, c.timestep, observer);
         std::cout << "Calculated pendulum with origin (" << pend.origin.x << ", " << pend.origin.y << ")'\n";
@@ -220,8 +226,11 @@ void graph(const Config& c, sf::RenderWindow& window, sf::View& view) {
 
     //trajectory with an observer
     std::vector<std::pair<double, double>> trajectory;
-    auto observer = [&trajectory](const state_type& x, double t) {
+    auto observer = [&trajectory, &c](const state_type& x, double t) {
         trajectory.push_back({x[0], x[1]});
+        if (c.log) {
+            std::cout << "Made timestep: " << trajectory.size() * c.timestep  << "/" << c.runtime << '\n';
+        }
     };
 
     //run the solver with the observer

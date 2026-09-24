@@ -1,8 +1,8 @@
 mode = "single"
 
 #general
-runtime = 500
-timestep = 0.000027
+runtime = 100
+timestep = 0.01
 l = 100
 dot_size = 5
 speed_factor = 1
@@ -20,9 +20,10 @@ grid_axes = true
 
 #options
 #log
+log = true
 
 #trace
 trace = false
 trace_length = 100
 
-#sound: when this enabled use timestep = 0.000027
+#sound: when this is enabled use timestep = 0.000027
